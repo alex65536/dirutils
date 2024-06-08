@@ -1,0 +1,27 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - ubuntu-latest
+        nim:
+        - 2.0.4
+        - stable
+        - devel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Nim environment
+        uses: jiro4989/setup-nim-action@v1.5.1
+        with:
+          nim-version: ${{ matrix.nim }}
+      - run: nim --version
+      - name: Build
+        run: nimble build -y

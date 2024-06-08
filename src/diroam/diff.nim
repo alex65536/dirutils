@@ -67,10 +67,10 @@ proc diff(c: DiffCtx, a, b: RootedEntry) =
       elif ib == sb.len: -1
       else: sa[ia][0].cmp(sb[ib][0])
     case cmp:
-      of int.low..(-1):
+      of int.low .. -1:
         c.reportTree(sa[ia][1], deDel)
         inc ia
-      of 1..int.high:
+      of 1 .. int.high:
         c.reportTree(sb[ib][1], deAdd)
         inc ib
       of 0:

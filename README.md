@@ -21,7 +21,7 @@ by Nim compiler should work fine as well. Windows is not supported and will neve
 ## Building
 
 1. Install Nim. See [here](https://nim-lang.org/install.html) for details.
-2. Run `nimble build`
+2. Run `nimble build`.
 
 The built binaries are placed into `bin/` subdirectory.
 

@@ -1,7 +1,7 @@
 # dirutils
 
 This repository is intended to be a collection of various utilities for working with directory
-trees. The utilities are written on [Nim programming language](https://nim-lang.org/).
+trees. The utilities are written on [Nim](https://nim-lang.org/) programming language.
 
 ## What utilities can I find here?
 

@@ -5,15 +5,15 @@ import nimcrypto/[hash, sha2]
 
 type
   InodeKind* = enum
-    ikFile, ikDir, ikLink, ikBlockDev, ikCharDev, ikFifo, ikSocket, ikUnknown, ikGit
+    ikDir, ikFile, ikLink, ikBlockDev, ikCharDev, ikFifo, ikSocket, ikUnknown, ikGit
 
   Inode* = object
     case kind*: InodeKind
+    of ikDir: discard
     of ikFile:
       size*: uint64
       fileMtime*: DateTime
       hash*: string
-    of ikDir: discard
     of ikLink:
       target*: Path
     of ikBlockDev, ikCharDev:
@@ -44,12 +44,12 @@ func doFmt(t: DateTime): string = t.format("yyyy-MM-dd HH:mm:ss")
 
 func desc*(i: Inode): string =
   case i.kind:
+    of ikDir: "dir"
     of ikFile:
       if i.hash != "":
         fmt"{i.size} {i.fileMtime.doFmt} {i.hash}"
       else:
         fmt"{i.size} {i.fileMtime.doFmt}"
-    of ikDir: "dir"
     of ikLink: fmt"-> {i.target.esc}"
     of ikBlockDev: fmt"dev blk 0x{i.dev:x}"
     of ikCharDev: fmt"dev char 0x{i.dev:x}"

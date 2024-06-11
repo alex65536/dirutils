@@ -1,4 +1,5 @@
-import std/[dirs, paths, times, strformat, algorithm, sugar, posix, symlinks, strutils, sets]
+import std/[dirs, paths, times, strformat, algorithm, sugar, symlinks, strutils, sets]
+import std/posix except Time
 import nestd/[nechecksums, neposix, nesystem, nepaths]
 import ./[git, esc]
 import nimcrypto/[hash, sha2]
@@ -12,7 +13,7 @@ type
     of ikDir: discard
     of ikFile:
       size*: uint64
-      fileMtime*: DateTime
+      fileMtime*: Time
       hash*: string
     of ikLink:
       target*: Path
@@ -20,10 +21,10 @@ type
       dev*: uint64
     of ikFifo, ikSocket: discard
     of ikUnknown:
-      unknownMtime*: DateTime
+      unknownMtime*: Time
     of ikGit:
       head*: string
-      gitMtime*: DateTime
+      gitMtime*: Time
 
   Entry* = object
     rawPath*: Path
@@ -40,9 +41,9 @@ type
 
 addEqForObject(Inode)
 
-func doFmt(t: DateTime): string = t.format("yyyy-MM-dd HH:mm:ss")
+proc doFmt(t: Time): string = t.utc.format("yyyy-MM-dd HH:mm:ss")
 
-func desc*(i: Inode): string =
+proc desc*(i: Inode): string =
   case i.kind:
     of ikDir: "dir"
     of ikFile:
@@ -62,7 +63,7 @@ func expandRawPath(p: Path): Path =
   if p == "".Path: ".".Path else: p
 
 func path*(e: Entry): Path = e.rawPath.expandRawPath
-func desc*(e: Entry): string = fmt"{e.path.esc} {e.inode.desc}"
+proc desc*(e: Entry): string = fmt"{e.path.esc} {e.inode.desc}"
 func withRoot*(e: sink Entry, root: Path): RootedEntry = RootedEntry(e: e, root: root)
 
 func curDirEntry*(): Entry = Entry(rawPath: "".Path, inode: Inode(kind: ikDir))
@@ -86,10 +87,10 @@ proc scan*(e: RootedEntry, opts: ScanOptions): seq[(string, RootedEntry)] =
         subFullPath.lstat
       except OSError as exc:
         if exc.errorCode == ENOENT:
-          return Inode(kind: ikUnknown, unknownMtime: 0.fromUnix.utc)
+          return Inode(kind: ikUnknown, unknownMtime: 0.fromUnix)
         raise
       let size = stat.st_size.uint64
-      let mtime = stat.st_mtim.toTime.utc
+      let mtime = stat.st_mtim.toTime
       let ftype = stat.st_mode.cint and S_IFMT
       if ftype == S_IFREG:
         let hash = if size != 0 and size <= opts.fileReadLimit:

@@ -14,7 +14,7 @@ func split2(src, pat: string): (string, string) =
     raise GitError.newException(fmt"expected {pat.esc}")
   return (l, r)
 
-proc parseDateFromReflog(line: string): DateTime =
+proc parseDateFromReflog(line: string): Time =
   # Yes, real actual git parses reflog lines approximately the same way...
   var line = line
   line = line.split2(">")[1]
@@ -25,7 +25,7 @@ proc parseDateFromReflog(line: string): DateTime =
   let (rawTs, rawTz) = line.split2(" ")
   let tz = rawTz.parse("ZZZ").timezone
   let ts = fromUnix(rawTs.parseBiggestInt.int64)
-  ts.inZone(tz).utc
+  ts.inZone(tz).toTime
 
 proc newGit*(path: Path): Git =
   let gitPath = path / ".git".Path
@@ -76,7 +76,7 @@ proc resolveRef(g; name: string): string =
     name = name.substr(prefix.len)
   raise GitError.newException("refs nest too deep")
 
-proc parseMtimeFromLog*(g): DateTime =
+proc parseMtimeFromLog*(g): Time =
   let f = open(string(g.path / "logs".Path / "HEAD".Path))
   defer: f.close
   var

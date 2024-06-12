@@ -79,7 +79,7 @@ when isMainModule:
     ap.run
   except ShortCircuit as exc:
     case exc.flag:
-      of "version": echo fmt"diroam {version}"
+      of "version": echo fmt"diroam (dirutils {version})"
       else: raise
   except UsageError:
     stdout.write fmt"Error: {getCurrentExceptionMsg()}{""\n\n""}"

@@ -3,6 +3,10 @@ when isMainModule:
   import argparse
   import diroam/[entry, diff]
 
+  const
+    NimblePkgVersion {.strdefine.} = "???"
+    version = NimblePkgVersion
+
   let useColor = stdout.isatty and not existsEnv("NO_COLOR")
 
   proc printDiffLine(dir: char, s: string) =
@@ -35,7 +39,8 @@ when isMainModule:
 
   var scan = none(ScanOptions)
   var ap = newParser "diroam":
-    help "recursively walks around directory trees"
+    help "Recursively walks around directory trees"
+    flag "--version", "-v", shortcircuit = true
     option "--file-read-limit", "-l", default = "4096".some,
            help = "max file size that can be read fully, use \"oo\" for unlimited"
     flag "--no-scan-git", "-G", help = "treat git repos as regular dirs, not as git repos"
@@ -72,6 +77,11 @@ when isMainModule:
 
   try:
     ap.run
+  except ShortCircuit as exc:
+    case exc.flag:
+      of "version": echo fmt"diroam {version}"
+      else: raise
   except UsageError:
-    stderr.writeLine(getCurrentExceptionMsg())
+    stdout.write fmt"Error: {getCurrentExceptionMsg()}{""\n\n""}"
+    stdout.write ap.help
     quit 1

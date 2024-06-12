@@ -1,4 +1,4 @@
-import std/[strformat, paths, sets]
+import std/[strformat, paths, sets, sugar]
 import ./entry
 
 type
@@ -19,13 +19,20 @@ type
   DiffOptions* = object
     scan*: ScanOptions
     foldDirs*: HashSet[Path]
+    dropNsec*: bool
 
   DiffCtx = object
     opts: DiffOptions
     observ: DiffObserver
 
+func inodeEq(c: DiffCtx, a, b: Inode): bool =
+  if c.opts.dropNsec:
+    a.dup(dropNsec) == b.dup(dropNsec)
+  else:
+    a == b
+
 proc treesEqual(c: DiffCtx, a, b: RootedEntry): bool =
-  if a.e.inode != b.e.inode:
+  if not c.inodeEq(a.e.inode, b.e.inode):
     return false
   let
     sa = a.scan(c.opts.scan)
@@ -53,7 +60,7 @@ proc diff(c: DiffCtx, a, b: RootedEntry) =
     if not c.treesEqual(a, b):
       c.observ(DiffEntry(kind: deMod, pre: a.e, cur: b.e))
     return
-  if a.e.inode != b.e.inode:
+  if not c.inodeEq(a.e.inode, b.e.inode):
     c.observ(DiffEntry(kind: deMod, pre: a.e, cur: b.e))
   let
     sa = a.scan(c.opts.scan)

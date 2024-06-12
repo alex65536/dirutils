@@ -59,11 +59,14 @@ when isMainModule:
       help "computes recursively the difference between two directories"
       arg "dir1", help = "first directory to compare"
       arg "dir2", help = "second directory to compare"
-      option "--fold-dir", "-d", multiple = true, help = "do not show detailed diff of FOLD_DIR, only indicate whether it is changed"
+      option "--fold-dir", "-d", multiple = true,
+             help = "do not show detailed diff of FOLD_DIR, only indicate whether it is changed"
+      flag "--drop-nsec", "-N", help = "drop nanosecond part of all timestamps for comparisons"
       run:
         let o = DiffOptions(
           scan: scan.get,
           foldDirs: toHashSet[Path](opts.foldDir.map(s => s.Path.dup(normalizePath))),
+          dropNsec: opts.dropNsec,
         )
         diff(opts.dir1.Path.dup(normalizePath), opts.dir2.Path.dup(normalizePath), o, observer)
 

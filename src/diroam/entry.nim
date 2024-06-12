@@ -59,6 +59,15 @@ proc desc*(i: Inode): string =
     of ikUnknown: fmt"??? {i.unknownMtime.doFmt}"
     of ikGit: fmt"git {i.gitMtime.doFmt} {i.head}"
 
+func dropNsec(t: var Time) = t = t.toUnix.fromUnix
+
+func dropNsec*(i: var Inode) =
+  case i.kind:
+    of ikFile: i.fileMtime.dropNsec
+    of ikUnknown: i.unknownMtime.dropNsec
+    of ikGit: i.gitMtime.dropNsec
+    else: discard
+
 func expandRawPath(p: Path): Path =
   if p == "".Path: ".".Path else: p
 

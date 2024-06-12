@@ -8,6 +8,9 @@ when isMainModule:
     version = NimblePkgVersion
 
   let useColor = stdout.isatty and not existsEnv("NO_COLOR")
+  var prefix = "".Path
+
+  proc desc(e: Entry): string = e.desc(prefix = prefix)
 
   proc printDiffLine(dir: char, s: string) =
     let color = case dir:
@@ -45,6 +48,7 @@ when isMainModule:
            help = "max file size that can be read fully, use \"oo\" for unlimited"
     flag "--no-scan-git", "-G", help = "treat git repos as regular dirs, not as git repos"
     option "--exclude", "-x", multiple = true, help = "ignore given path while traversing"
+    option "--prefix", "-p", default = "".some, help = "prepend PREFIX to printed paths"
     run:
       if opts.argparse_command == "":
         raise UsageError.newException("No command supplied")
@@ -53,6 +57,7 @@ when isMainModule:
         scanGitRepos: not opts.noScanGit,
         excludes: toHashSet[Path](opts.exclude.map(s => s.Path.dup(normalizePath))),
       ).some
+      prefix = opts.prefix.Path.dup(normalizePath)
       if ".".Path in scan.get.excludes:
         raise UsageError.newException("Cannot exclude the entire directory tree")
     command "list":

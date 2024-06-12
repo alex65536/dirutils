@@ -71,8 +71,16 @@ func dropNsec*(i: var Inode) =
 func expandRawPath(p: Path): Path =
   if p == "".Path: ".".Path else: p
 
+func displayPath*(e: Entry, prefix = "".Path): Path =
+  result = prefix / e.rawPath
+  result.normalizePath
+  result = result.expandRawPath
+
+proc desc*(e: Entry, prefix = "".Path): string =
+  fmt"{e.displayPath(prefix = prefix).esc} {e.inode.desc}"
+
 func path*(e: Entry): Path = e.rawPath.expandRawPath
-proc desc*(e: Entry): string = fmt"{e.path.esc} {e.inode.desc}"
+
 func withRoot*(e: sink Entry, root: Path): RootedEntry = RootedEntry(e: e, root: root)
 
 func curDirEntry*(): Entry = Entry(rawPath: "".Path, inode: Inode(kind: ikDir))

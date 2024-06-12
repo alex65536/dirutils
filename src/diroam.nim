@@ -46,13 +46,13 @@ when isMainModule:
     flag "--no-scan-git", "-G", help = "treat git repos as regular dirs, not as git repos"
     option "--exclude", "-x", multiple = true, help = "ignore given path while traversing"
     run:
+      if opts.argparse_command == "":
+        raise UsageError.newException("No command supplied")
       scan = ScanOptions(
         fileReadLimit: opts.fileReadLimit.parseFileReadLimit,
         scanGitRepos: not opts.noScanGit,
         excludes: toHashSet[Path](opts.exclude.map(s => s.Path.dup(normalizePath))),
       ).some
-      if opts.argparse_command == "":
-        raise UsageError.newException("No command supplied")
       if ".".Path in scan.get.excludes:
         raise UsageError.newException("Cannot exclude the entire directory tree")
     command "list":

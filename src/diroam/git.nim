@@ -52,14 +52,15 @@ proc loadPackedRefs(g) =
   g.packedRefs = some(refs)
 
 proc readRef(g; name: string): string =
-  if g.packedRefs.isSome:
-    if name in g.packedRefs.get:
-      return g.packedRefs.get[name]
+  if g.packedRefs.isSome and name in g.packedRefs.get:
+    return g.packedRefs.get[name]
   var f: File
-  if not open(f, string(g.path / name.Path)):
+  let fname = g.path / name.Path
+  if not open(f, fname.string):
     g.loadPackedRefs
     if name in g.packedRefs.get:
       return g.packedRefs.get[name]
+    raise GitError.newException(fmt"unable to open ref file {fname.esc}")
   defer: f.close
   result = f.readAll
   result.stripLineEnd
@@ -67,7 +68,7 @@ proc readRef(g; name: string): string =
 proc resolveRef(g; name: string): string =
   var name = name
   for _ in 0..<16:
-    if (name != "HEAD" and not name.startsWith("refs/")) or ("./" in name):
+    if (name != "HEAD" and not name.startsWith("refs/")) or "/." in name:
       raise GitError.newException(fmt"unsafe ref {name.esc}")
     name = g.readRef(name)
     const prefix = "ref: "

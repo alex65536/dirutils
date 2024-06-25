@@ -1,5 +1,5 @@
 import std/[dirs, paths, tables, options, strutils, times, strformat, strmisc]
-import ./esc
+import ../common/escapes
 
 type
   Git* = object

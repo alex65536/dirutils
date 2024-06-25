@@ -1,8 +1,9 @@
 import std/[dirs, paths, times, strformat, algorithm, sugar, symlinks, strutils, sets]
 import std/posix except Time
 import nestd/[nechecksums, neposix_utils, nesystem, nepaths]
-import ./[git, esc]
 import nimcrypto/[hash, sha2]
+import ./git
+import ../common/escapes
 
 type
   InodeKind* = enum

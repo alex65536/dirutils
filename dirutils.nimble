@@ -6,7 +6,7 @@ description   = "Various utilities to work with directory trees"
 license       = "MIT"
 srcDir        = "src"
 binDir        = "bin"
-bin           = @["diroam"]
+bin           = @["diroam", "reweave"]
 
 # Dependencies
 
@@ -26,3 +26,4 @@ task pretty, "Prettify the sources":
     for f in dir.listDirs:
       walk f
   walk "src"
+  walk "tests"

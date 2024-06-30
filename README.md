@@ -12,6 +12,9 @@ The set of utilities currently includes:
   - `diroam diff`: Searches for differences between two directories recurively. Unlike `diff -r`,
     it mostly uses only metadata for the search and prints a convenient summary of which files are
     added, deleted or modified.
+- `reweave`: Moves, creates and removes directories, keeping symbolic links from and into the moved
+  directories consistent. It updates links after move to make sure that they are not broken and
+  still point to the correct target (even if the target was moved).
 
 ## Which operating systems are supported?
 

@@ -4,8 +4,8 @@ import reweave/[ops, vfs, extpaths]
 const
   StressTimeMsec {.intdefine.}: int = 1000
   StressTime = initDuration(milliseconds = StressTimeMsec)
-  StressEchoIntervalMesc {.intdefine.}: int = 200
-  StressEchoInterval = initDuration(milliseconds = StressEchoIntervalMesc)
+  StressEchoIntervalMsec {.intdefine.}: int = 200
+  StressEchoInterval = initDuration(milliseconds = StressEchoIntervalMsec)
 
 proc stressMainLoop*(action: proc(rnd: var Rand)) =
   var mainRnd = initRand(42)

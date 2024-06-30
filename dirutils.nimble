@@ -10,7 +10,7 @@ bin           = @["diroam", "reweave"]
 
 # Dependencies
 
-requires "nim >= 2.0.0"
+requires "nim >= 2.0.6"
 requires "https://github.com/alex65536/nim-nestd#v0.2.0"
 requires "argparse ~= 4.0.1"
 requires "unicodeplus ~= 0.13.0"

@@ -47,6 +47,7 @@ func validate*(o: CalcRelinksOptions, opList: OpList) {.raises: [CalcRelinksVali
       check op.rmdir notin rootSet, fmt"cannot remove root {op.rmdir.esc}"
 
 proc scanLinks(vfs: Vfs, path: NaivePath, excludes: PathPrefixSet, res: var seq[NaivePath]) =
+  if path in excludes: return
   let kind = vfs.inodeKind(path)
   if kind.isNone: return
   case kind.get

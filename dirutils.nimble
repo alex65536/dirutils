@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.1.0"
+version       = "1.2.0"
 author        = "Alexander Kernozhitsky"
 description   = "Various utilities to work with directory trees"
 license       = "MIT"

@@ -26,3 +26,5 @@ jobs:
       - run: nim --version
       - name: Build
         run: nimble build -y
+      - name: Run tests
+        run: nimble test -d:release -d:StressTimeMsec=20000 -d:StressEchoIntervalMsec=1000

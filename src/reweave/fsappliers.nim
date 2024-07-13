@@ -42,8 +42,6 @@ template applyImpl(srcA: FsApplier, srcMsg: string, apply: untyped, unapply: unt
   a.unapplyProcs.add do():
     a.logger(adUnapply, msg)
     wrapOpExceptions(adUnapply, msg, unapply)
-  # Work around https://github.com/nim-lang/Nim/issues/23748.
-  discard a
 
 proc rollback*(a: FsApplier) {.raises: [FsApplierError].} =
   while a.unapplyProcs.len > 0:
